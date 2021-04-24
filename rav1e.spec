@@ -1,19 +1,19 @@
 Summary:	The fastest and safest AV1 encoder
 Summary(pl.UTF-8):	Najszybszy i najbezpieczniejszy koder AV1
 Name:		rav1e
-Version:	0.3.3
+Version:	0.4.1
 Release:	1
 License:	BSD
 Group:		Libraries
 #Source0Download: https://github.com/xiph/rav1e/releases
 Source0:	https://github.com/xiph/rav1e/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	4a9f8e2f9d25f516bdbec94235370edf
+# Source0-md5:	e9c3c833c33bcf1bbafbdf1dcc170e10
 # cd %{name}-%{version}
 # cargo vendor
 # cd ..
 # tar cJf rav1e-crates-%{version}.tar.xz %{name}-%{version}/{vendor,Cargo.lock}
 Source1:	%{name}-crates-%{version}.tar.xz
-# Source1-md5:	152ace1ef7b4c31a60b659d6379da146
+# Source1-md5:	cb04c9255da1a4b5caca116652a7781e
 URL:		https://github.com/xiph/rav1e
 BuildRequires:	cargo
 BuildRequires:	cargo-c
