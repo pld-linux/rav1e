@@ -24,8 +24,14 @@ BuildRequires:	rust
 # for tests only?
 #BuildRequires:	aom-devel
 #BuildRequires:	dav1d-devel
-ExclusiveArch:	%{ix86} %{x8664} aarch64
+ExclusiveArch:	%{ix86} %{x8664} x32 aarch64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%ifarch	x32
+%define		target_opt	--target x86_64-unknown-linux-gnux32
+%else
+%define		target_opt	%{nil}
+%endif
 
 %description
 rav1e is an AV1 video encoder. It is designed to eventually cover all
@@ -90,16 +96,16 @@ EOF
 %build
 export CARGO_HOME="$(pwd)/.cargo"
 
-cargo -v build --release --frozen
+cargo -v build --release --frozen %{target_opt}
 
-cargo -v cbuild --release --frozen
+cargo -v cbuild --release --frozen %{target_opt}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-cargo -v install --frozen --path . --root $RPM_BUILD_ROOT%{_prefix}
+cargo -v install --frozen --path %{target_opt} . --root $RPM_BUILD_ROOT%{_prefix}
 
-cargo -v cinstall --frozen --release \
+cargo -v cinstall --frozen --release %{target_opt} \
 	--destdir $RPM_BUILD_ROOT \
 	--prefix %{_prefix} \
 	--bindir %{_bindir} \
