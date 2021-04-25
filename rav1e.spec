@@ -28,9 +28,11 @@ ExclusiveArch:	%{ix86} %{x8664} x32 aarch64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %ifarch	x32
-%define		target_opt	--target x86_64-unknown-linux-gnux32 --no-default-features --features "binaries signal_support"
+%define		target_opt	--target x86_64-unknown-linux-gnux32
+%define		features	--no-default-features --features "binaries signal_support"
 %else
 %define		target_opt	%{nil}
+%define		features	%{nil}
 %endif
 
 %description
@@ -96,14 +98,16 @@ EOF
 %build
 export CARGO_HOME="$(pwd)/.cargo"
 
-cargo -v build --release --frozen %{target_opt}
+cargo -v build --release --frozen %{target_opt} %{features}
 
 cargo -v cbuild --release --frozen %{target_opt}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-cargo -v install --frozen --path %{target_opt} . --root $RPM_BUILD_ROOT%{_prefix}
+cargo -v install --frozen %{target_opt} %{features} \
+	--path . \
+	--root $RPM_BUILD_ROOT%{_prefix}
 
 cargo -v cinstall --frozen --release %{target_opt} \
 	--destdir $RPM_BUILD_ROOT \
