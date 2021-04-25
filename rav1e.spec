@@ -28,7 +28,7 @@ ExclusiveArch:	%{ix86} %{x8664} x32 aarch64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %ifarch	x32
-%define		target_opt	--target x86_64-unknown-linux-gnux32
+%define		target_opt	--target x86_64-unknown-linux-gnux32 --no-default-features --features "binaries signal_support"
 %else
 %define		target_opt	%{nil}
 %endif
