@@ -1,3 +1,11 @@
+#
+# Conditional build:
+%bcond_without	clib	# C library
+
+# no working cargo-c on x32 currently
+%ifarch x32
+%undefine	with_clib
+%endif
 Summary:	The fastest and safest AV1 encoder
 Summary(pl.UTF-8):	Najszybszy i najbezpieczniejszy koder AV1
 Name:		rav1e
@@ -16,7 +24,7 @@ Source1:	%{name}-crates-%{version}.tar.xz
 # Source1-md5:	cb04c9255da1a4b5caca116652a7781e
 URL:		https://github.com/xiph/rav1e
 BuildRequires:	cargo
-BuildRequires:	cargo-c
+%{?with_clib:BuildRequires:	cargo-c}
 %ifarch %{x8664}
 BuildRequires:	nasm
 %endif
@@ -100,7 +108,9 @@ export CARGO_HOME="$(pwd)/.cargo"
 
 cargo -v build --release --frozen %{target_opt} %{features}
 
+%if %{with clib}
 cargo -v cbuild --release --frozen %{target_opt}
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -109,12 +119,14 @@ cargo -v install --frozen %{target_opt} %{features} \
 	--path . \
 	--root $RPM_BUILD_ROOT%{_prefix}
 
+%if %{with clib}
 cargo -v cinstall --frozen --release %{target_opt} \
 	--destdir $RPM_BUILD_ROOT \
 	--prefix %{_prefix} \
 	--bindir %{_bindir} \
 	--includedir %{_includedir} \
 	--libdir %{_libdir}
+%endif
 
 %{__rm} $RPM_BUILD_ROOT%{_prefix}/.crates*
 
@@ -129,6 +141,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc LICENSE PATENTS README.md
 %attr(755,root,root) %{_bindir}/rav1e
 
+%if %{with clib}
 %files libs
 %defattr(644,root,root,755)
 %doc LICENSE PATENTS README.md doc/GLOSSARY.md
@@ -144,3 +157,4 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/librav1e.a
+%endif
