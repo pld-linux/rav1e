@@ -10,7 +10,7 @@ Summary:	The fastest and safest AV1 encoder
 Summary(pl.UTF-8):	Najszybszy i najbezpieczniejszy koder AV1
 Name:		rav1e
 Version:	0.5.1
-Release:	1
+Release:	2
 License:	BSD
 Group:		Libraries
 #Source0Download: https://github.com/xiph/rav1e/releases
@@ -26,9 +26,9 @@ URL:		https://github.com/xiph/rav1e
 BuildRequires:	cargo
 %{?with_clib:BuildRequires:	cargo-c}
 %ifarch %{x8664}
-BuildRequires:	nasm
+BuildRequires:	nasm >= 2.14
 %endif
-BuildRequires:	rust
+BuildRequires:	rust >= 1.51.0
 # for tests only?
 #BuildRequires:	aom-devel
 #BuildRequires:	dav1d-devel
@@ -109,7 +109,9 @@ export CARGO_HOME="$(pwd)/.cargo"
 cargo -v build --release --frozen %{target_opt} %{features}
 
 %if %{with clib}
-cargo -v cbuild --release --frozen %{target_opt}
+cargo -v cbuild --release --frozen %{target_opt} \
+	--prefix %{_prefix} \
+	--libdir %{_libdir}
 %endif
 
 %install
