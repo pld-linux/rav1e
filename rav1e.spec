@@ -9,26 +9,24 @@
 Summary:	The fastest and safest AV1 encoder
 Summary(pl.UTF-8):	Najszybszy i najbezpieczniejszy koder AV1
 Name:		rav1e
-Version:	0.7.1
+Version:	0.8.1
 Release:	1
 License:	BSD
 Group:		Libraries
 #Source0Download: https://github.com/xiph/rav1e/releases
 Source0:	https://github.com/xiph/rav1e/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	2e48f60bea23049a750f0721e30cdd54
-# cd %{name}-%{version}
-# cargo vendor
-# cd ..
-# tar cJf rav1e-crates-%{version}.tar.xz %{name}-%{version}/{vendor,Cargo.lock}
+# Source0-md5:	7885b14bf77f7739550685dccefb3c6a
+# cargo vendor-filterer --platform='*-unknown-linux-*' --tier=2
+# tar cJf rav1e-crates-%{version}.tar.xz vendor Cargo.lock
 Source1:	%{name}-crates-%{version}.tar.xz
-# Source1-md5:	cf73acf89cd9948848fec01fc29d0e08
+# Source1-md5:	179ceedaef0fe69eadfc09db54b2d3d9
 URL:		https://github.com/xiph/rav1e
 BuildRequires:	cargo
 %{?with_clib:BuildRequires:	cargo-c}
 %ifarch %{x8664}
 BuildRequires:	nasm >= 2.14
 %endif
-BuildRequires:	rust >= 1.51.0
+BuildRequires:	rust >= 1.83.0
 # for tests only?
 #BuildRequires:	aom-devel
 #BuildRequires:	dav1d-devel
@@ -89,13 +87,13 @@ Static rav1e library.
 Statyczna biblioteka rav1e.
 
 %prep
-%setup -q -b1
+%setup -q -a1
 
 # use our offline registry
 export CARGO_HOME="$(pwd)/.cargo"
 
 mkdir -p "$CARGO_HOME"
-cat >.cargo/config <<EOF
+cat >.cargo/config.toml <<EOF
 [source.crates-io]
 replace-with = 'vendored-sources'
 
@@ -148,11 +146,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc CHANGELOG.md LICENSE PATENTS README.md doc/GLOSSARY.md
 %attr(755,root,root) %{_libdir}/librav1e.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/librav1e.so.0.7
+%ghost %{_libdir}/librav1e.so.0.8
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/librav1e.so
+%{_libdir}/librav1e.so
 %{_includedir}/rav1e
 %{_pkgconfigdir}/rav1e.pc
 
