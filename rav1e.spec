@@ -1,6 +1,7 @@
 #
 # Conditional build:
-%bcond_without	clib	# C library
+%bcond_without	clib		# C library
+%bcond_without	static_libs	# static libraries
 
 # no working cargo-c on x32 currently
 %ifarch x32
@@ -109,7 +110,9 @@ cargo -v build --release --frozen %{target_opt} %{features}
 %if %{with clib}
 cargo -v cbuild --release --frozen %{target_opt} \
 	--prefix %{_prefix} \
-	--libdir %{_libdir}
+	--libdir %{_libdir} \
+	--library-type cdylib \
+	%{?with_static_libs:--library-type staticlib}
 %endif
 
 %install
@@ -125,7 +128,9 @@ cargo -v cinstall --frozen --release %{target_opt} \
 	--prefix %{_prefix} \
 	--bindir %{_bindir} \
 	--includedir %{_includedir} \
-	--libdir %{_libdir}
+	--libdir %{_libdir} \
+	--library-type cdylib \
+	%{?with_static_libs:--library-type staticlib}
 %endif
 
 %{__rm} $RPM_BUILD_ROOT%{_prefix}/.crates*
@@ -154,7 +159,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/rav1e
 %{_pkgconfigdir}/rav1e.pc
 
+%if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/librav1e.a
+%endif
 %endif
