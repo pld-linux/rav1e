@@ -27,10 +27,12 @@ BuildRequires:	cargo
 %ifarch %{x8664}
 BuildRequires:	nasm >= 2.14
 %endif
+BuildRequires:	rpmbuild(macros) >= 2.050
 BuildRequires:	rust >= 1.83.0
 # for tests only?
 #BuildRequires:	aom-devel
 #BuildRequires:	dav1d-devel
+%{?rust_req}
 ExclusiveArch:	%{ix86} %{x8664} x32 aarch64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -56,6 +58,7 @@ tam, gdzie libaom (koder referencyjny) jest zbyt wolny.
 Summary:	Shared rav1e library
 Summary(pl.UTF-8):	Biblioteka współdzielona rav1e
 Group:		Libraries
+%{?rust_req}
 
 %description libs
 Shared rav1e library.
